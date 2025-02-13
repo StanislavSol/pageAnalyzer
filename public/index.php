@@ -13,6 +13,9 @@ $container->set('renderer', function () {
 $app = AppFactory::createFromContainer($container);
 $app->addErrorMiddleware(true, true, true);
 
+$dotenv = Dotenv\Dotenv::createImmutable('/home/ss/php-project-9/');
+$dotenv->load();
+
 $app->get('/', function ($request, $response, $args) {
     return $this->get('renderer')->render($response, 'index.phtml');
 });
