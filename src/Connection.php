@@ -1,23 +1,37 @@
 <?php
 
-namespace Database;
+namespace App;
 
 final class Connection
 {
     private static ?Connection $conn = null;
 
-    public function connect($params)
+    private function getConStr($databaseUrl)
     {
+        $username = $databaseUrl['user'];
+        $password = $databaseUrl['pass'];
+        $host = $databaseUrl['host'];
+        $port = $databaseUrl['port'];
+        $dbName = ltrim($databaseUrl['path'], '/');
+
         $conStr = sprintf(
             "pgsql:host=%s;port=%d;dbname=%s;user=%s;password=%s",
-            $params['host'],
-            $params['port'],
-            $params['dbname'],
-            $params['user'],
-            $params['pass']
+            $host,
+            $port,
+            $dbName,
+            $username,
+            $password
         );
+
+        return $conStr;
+
+    }
+
+    public function connect($databaseUrl)
+
+        $conStr = $this->getConStr($databaseUrl);
         $pdo = new \PDO($conStr);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXEPTION);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
     }

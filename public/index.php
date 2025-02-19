@@ -31,10 +31,24 @@ $databaseUrl = parse_url($_ENV['DATABASE_URL']);
     echo $e->getMessage();
 }*/
 
-$conn = Connection::get()->connect($databaseUrl);
+//$conn = Connection::get()->connect($databaseUrl);
 
 $app->get('/', function ($request, $response, $args) {
-    return $this->get('renderer')->render($response, 'index.phtml');
+    $params = [
+        'errors' => []
+    ];
+    return $this->get('renderer')->render($response, 'index.phtml', $params)->setName('index');
 });
+
+$app->get('/url/{id}', function ($request, $response, $args) {
+    return $this->get('renderer')->render($response, 'url.phtml', $params)->setName('url');
+});
+
+$app->get('/urls', function ($request, $response, $args) {
+    return $this->get('renderer')->render($response, 'urls.phtml', $params)->setName('urls');
+});
+
+
+$app->post('/urls/{id}', )
 
 $app->run();
