@@ -4,27 +4,40 @@ namespace App;
 
 class Url
 {
-    private \PDO $pdo;
+    private string $urlName;
+    private int $urlId;
+    private string $timeCreated
 
-    public function __construct(PDO $pdo)
+    public function __construct(string $urlName)
     {
-        $this->pdo = $pdo;
+        $this->$urlName = $urlName;
+        $this->$urlId = null;
+        $this->$timeCreated = null;
     }
 
-    private function isUrlInDatabase(string $urlName)
+    public function getUrl(): string
     {
-        $sql = "SELECT id FROM urls WHERE name = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$urlName]);
-        $result = $stmt->fetch();
-
-        if ($result) {}
-
+        return $this->$urlName;
     }
 
-    public function save($urlName)
+    public function getId(): int
     {
-        $
+        return $this->$urlId;
+    }
+
+    public function getTimeCreated(): string
+    {
+        return $this->$timeCreated;
+    }
+
+    public function setId($id): void
+    {
+        $this->$urlId = $id;
+    }
+
+    public function setTimeCreated($time): void
+    {
+        $this->$timeCreated = $time;
     }
 
 }

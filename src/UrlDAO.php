@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Url;
+
 class UserDAO 
 {
     private \PDO $pdo;
