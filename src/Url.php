@@ -8,11 +8,11 @@ class Url
     private int $urlId;
     private string $timeCreated
 
-    public function __construct(string $urlName)
+    public function __construct(string $urlName, string $timeCreated = null)
     {
         $this->$urlName = $urlName;
         $this->$urlId = null;
-        $this->$timeCreated = null;
+        $this->$timeCreated = $timeCreated;
     }
 
     public function getUrl(): string
