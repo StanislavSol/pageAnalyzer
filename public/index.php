@@ -10,7 +10,8 @@ if (file_exists($autoloadPath1)) {
 
 use Slim\Factory\AppFactory;
 use DI\Container;
-use Database\Connection;
+use App\Connection;
+use App\UrlDAO;
 
 $container = new Container();
 $container->set('renderer', function () {
@@ -35,16 +36,31 @@ $databaseUrl = parse_url($_ENV['DATABASE_URL']);
 
 $app->get('/', function ($request, $response, $args) {
     $params = [
+        'value' = $args['value'],
         'errors' => []
     ];
     return $this->get('renderer')->render($response, 'index.phtml', $params)->setName('index');
 });
 
-$app->get('/url/{id}', function ($request, $response, $args) {
+$app->get('/url/{id}', function ($request, $response, array $args) {
+    $id = $args['id'];
+    $pdo = Connection::get()->connect($databaseUrl);
+    $dao = new UrlDAO($pdo);
+    $url = $dao-find($id);
+    $params = [
+        'url' => $url,
+        'errors' => []
+    ];
     return $this->get('renderer')->render($response, 'url.phtml', $params)->setName('url');
 });
 
-$app->get('/urls', function ($request, $response, $args) {
+$app->get('/urls', function ($request, $response, $args) use ($databaseUrl) {
+    $pdo = Connection::get()->connect($databaseUrl);
+    $urls = new UrlDAO($pdo)->getAllUrl();
+    $params = [
+        'urls' => $urls,
+        'errors' => []
+    ];
     return $this->get('renderer')->render($response, 'urls.phtml', $params)->setName('urls');
 });
 

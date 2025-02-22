@@ -26,7 +26,6 @@ class UrlDAO
             $id = (int) $this->pdo->lastInsertId();
             $url->setId($id);
             $url->setTimeCreated($timeNow);
-
         }
     }
 
