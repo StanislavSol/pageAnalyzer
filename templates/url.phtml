@@ -5,27 +5,27 @@
 
 <main class="flex-grow-1">
     <div class="container-lg mt-3">
-        <h1>Сайт: https://php-page-analyzer-ru.hexlet.app</h1>
+    <h1>Сайт: <?= $url->getUrl() ?></h1>
         <div class="table-responsive">
             <table class="table table-bordered table-hover text-nowrap" data-test="url">
       <tbody>
         <tr>
           <td>ID</td>
-          <td>1</td>
+          <td><?= $url->getId() ?></td>
         </tr>
         <tr>
           <td>Имя</td>
-          <td>https://php-page-analyzer-ru.hexlet.app</td>
+          <td><?= $url->getUrl() ?></td>
         </tr>
         <tr>
           <td>Дата создания</td>
-          <td>2025-02-22 08:13:00</td>
+          <td><?= $url->getTimeCreated() ?></td>
         </tr>
       </tbody>
     </table>
   </div>
   <h2 class="mt-5 mb-3">Проверки</h2>
-  <form method="post" action="/urls/1/checks">
+  <form method="post" action="/urls/<?= $url->getId() ?>/checks">
     <input type="submit" class="btn btn-primary" value="Запустить проверку">
   </form>
   <table class="table table-bordered table-hover" data-test="checks">
@@ -40,8 +40,8 @@
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($checks as $check): ?>
-          </tbody>
+      php foreach ($checks as $check): 
+    </tbody>
   </table>
         </div>
     </main>

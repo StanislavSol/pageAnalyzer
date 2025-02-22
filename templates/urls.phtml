@@ -19,13 +19,13 @@
             <tbody>
               <?php foreach ($urls as $url): ?>
                 <tr>
-                   <td><?=$url->getId()?></td>
+                   <td><?= $url->getId() ?></td>
                    <td>
-                   <a href="/urls/<?=$url->getId()?>">
-                       <?=$url->getUrl()?>
+                   <a href="/urls/<?= $url->getId() ?>">
+                       <?= $url->getUrl() ?>
                    </a>
                    </td>
-                   <td><?=$url->getTimeCreated()?></td>
+                   <td><?= $url->getTimeCreated() ?></td>
                    <td>null</td>
                 </tr>
            </tbody>
