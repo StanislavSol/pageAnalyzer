@@ -12,7 +12,10 @@ use Slim\Factory\AppFactory;
 use DI\Container;
 use App\Connection;
 use App\UrlDAO;
-use App\Validation;
+use App\Url;
+use App\NormalizationAndValidationURL;
+
+session_start();
 
 $container = new Container();
 $container->set('renderer', function () {
@@ -31,6 +34,7 @@ $databaseUrl = parse_url($_ENV['DATABASE_URL']);
 
 $app->get('/', function ($request, $response, array $args) {
     $params = $args;
+    var_dump($params);
     return $this->get('renderer')->render($response, 'index.phtml', $params);
 })->setName('index');
 
@@ -63,34 +67,22 @@ $router = $app->getRouteCollector()->getRouteParser();
 
 $app->post('/urls', function ($request, $response) use ($router, $databaseUrl) {
 
-    $urlData = $request->getParsedBodyParam('url');
-    $validator = new Validation();
-    $errors = $validator->getErrors($urlData);
-
-   // $parseUrl = parse_url($urlData);
-  //  $sheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
-   // $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
-  //  $resultUrl = "{$sheme}{$host}";
-  //  $validator = new Validator();
-  //  $errors = $validator->getErrors($resultUrl);
+    $gotUrl = $request->getParsedBodyParam('url')['name'];
+    $parsedUrl = new NormalizationAndValidationURL($gotUrl);
+    $errors = $parsedUrl->getErrors();
 
     if (count($errors) === 0) {
-
-        $parseUrl = parse_url($urlData);
-        $sheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
-        $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
-        $resultUrl = "{$sheme}{$host}";
-
-        $newUrl = new Url($resultData);
+        $normalUrl = $parsedUrl->getUnparseUrl();
+        $newUrl = new Url($normalUrl);
         $pdo = Connection::get()->connect($databaseUrl);
         $dao = new UrlDAO($pdo);
         $dao->save($newUrl);
-        if ($dao->isSaveUrl()) {
+        if ($dao->isSaveUrl) {
             $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
         } else {
             $this->get('flash')->addMessage('success', 'Страница уже существует');
         }
-        $id = $url->getId();
+        $id = $newUrl->getId();
         $url = $router->urlFor('url', ['id' => $id]);
         return $response->withRedirect($url);
     }
@@ -98,7 +90,6 @@ $app->post('/urls', function ($request, $response) use ($router, $databaseUrl) {
         'value' => $resultUrl,
         'errors' => $errors
     ];
-    var_dump($errors);
 
     $response = $response->withStatus(422);
     return $this->get('renderer')->render($response, 'index.phtml', $params);

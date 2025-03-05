@@ -4,40 +4,40 @@ namespace App;
 
 class Url
 {
-    private string $urlName;
-    private int $urlId;
-    private string $timeCreated
+    private $urlName;
+    private $urlId;
+    private $timeCreated;
 
     public function __construct(string $urlName, string $timeCreated = null)
     {
-        $this->$urlName = $urlName;
-        $this->$urlId = null;
-        $this->$timeCreated = $timeCreated;
+        $this->urlName = $urlName;
+        $this->urlId = null;
+        $this->timeCreated = $timeCreated;
     }
 
-    public function getUrl(): string
+    public function getUrlName(): string
     {
-        return $this->$urlName;
+        return $this->urlName;
     }
 
-    public function getId(): int
+    public function getId()
     {
-        return $this->$urlId;
+        return $this->urlId;
     }
 
     public function getTimeCreated(): string
     {
-        return $this->$timeCreated;
+        return $this->timeCreated;
     }
 
     public function setId($id): void
     {
-        $this->$urlId = $id;
+        $this->urlId = $id;
     }
 
     public function setTimeCreated($time): void
     {
-        $this->$timeCreated = $time;
+        $this->timeCreated = $time;
     }
 
 }

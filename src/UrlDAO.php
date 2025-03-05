@@ -8,7 +8,7 @@ use Carbon\Carbon;
 class UrlDAO 
 {
     private \PDO $pdo;
-    private bool $isSaveUrl;
+    public bool $isSaveUrl;
 
     public function __construct(\PDO $pdo) {
         $this->pdo = $pdo;
@@ -19,17 +19,17 @@ class UrlDAO
     {
         if (is_null($url->getId())) {
             try {
-                $sql = "INSERT INTO users (name, created_at) VALUES (?, ?)";
+                $sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
                 $stmt = $this->pdo->prepare($sql);
-                $username = $user->getUrl();
+                $username = $url->getUrlName();
                 $timeNow = Carbon::now()->toDateTimeString();
-                $stmt->bindParam(1, $name);
+                $stmt->bindParam(1, $username);
                 $stmt->bindParam(2, $timeNow);
                 $stmt->execute();
                 $id = (int) $this->pdo->lastInsertId();
                 $url->setId($id);
                 $url->setTimeCreated($timeNow);
-            } catch (PDOException $e) {
+            } catch (\PDOException) {
                 $this->isSaveUrl = false;
             }
         }
