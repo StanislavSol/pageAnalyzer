@@ -12,6 +12,7 @@ use Slim\Factory\AppFactory;
 use DI\Container;
 use App\Connection;
 use App\UrlDAO;
+use App\Validation;
 
 $container = new Container();
 $container->set('renderer', function () {
@@ -29,64 +30,78 @@ $dotenv->load();
 $databaseUrl = parse_url($_ENV['DATABASE_URL']);
 
 $app->get('/', function ($request, $response, array $args) {
-    $params = [
-        'value' = $args['value'],
-        'errors' => []
-    ];
-    return $this->get('renderer')->render($response, 'index.phtml', $params)->setName('index');
-});
+    $params = $args;
+    return $this->get('renderer')->render($response, 'index.phtml', $params);
+})->setName('index');
 
 $app->get('/url/{id}', function ($request, $response, array $args) use ($databaseUrl) {
     $id = $args['id'];
     $pdo = Connection::get()->connect($databaseUrl);
     $dao = new UrlDAO($pdo);
     $url = $dao->find($id);
-    $messages = $messages = $this->get('flash')->getMessages();
+    $messages = $this->get('flash')->getMessages();
     $params = [
         'url' => $url,
         'messages' => $messages
     ];
-    return $this->get('renderer')->render($response, 'url.phtml', $params)->setName('url');
-});
+    return $this->get('renderer')->render($response, 'url.phtml', $params);
+})->setName('url');
 
 $app->get('/urls', function ($request, $response, array $args) use ($databaseUrl) {
     $pdo = Connection::get()->connect($databaseUrl);
-    $urls = new UrlDAO($pdo)->getAllUrl();
+    var_dump(gettype($pdo));
+    $dao = new UrlDAO($pdo);
+    $urls = $dao->getAllUrl();
     $params = [
         'urls' => $urls,
         'errors' => []
     ];
-    return $this->get('renderer')->render($response, 'urls.phtml', $params)->setName('urls');
-});
+    return $this->get('renderer')->render($response, 'urls.phtml', $params);
+})->setName('urls');
 
 $router = $app->getRouteCollector()->getRouteParser();
 
 $app->post('/urls', function ($request, $response) use ($router, $databaseUrl) {
 
-    $urlData = $request->getParseBodyParam('url');
-    $parseUrl = parse_url($urlData);
-    $sheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
-    $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
-    $resultUrl = "{$sheme}{$host}";
-    $errors = new Validator()->getErrors($resultUrl);
+    $urlData = $request->getParsedBodyParam('url');
+    $validator = new Validation();
+    $errors = $validator->getErrors($urlData);
+
+   // $parseUrl = parse_url($urlData);
+  //  $sheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
+   // $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
+  //  $resultUrl = "{$sheme}{$host}";
+  //  $validator = new Validator();
+  //  $errors = $validator->getErrors($resultUrl);
 
     if (count($errors) === 0) {
 
-        $url = new Url($resultData);
+        $parseUrl = parse_url($urlData);
+        $sheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
+        $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
+        $resultUrl = "{$sheme}{$host}";
+
+        $newUrl = new Url($resultData);
         $pdo = Connection::get()->connect($databaseUrl);
         $dao = new UrlDAO($pdo);
-        $dao->save($url);
+        $dao->save($newUrl);
         if ($dao->isSaveUrl()) {
             $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
         } else {
             $this->get('flash')->addMessage('success', 'Страница уже существует');
         }
         $id = $url->getId();
-        return $router->urlFor('url', ['id' => $id]);
+        $url = $router->urlFor('url', ['id' => $id]);
+        return $response->withRedirect($url);
     }
+    $params = [
+        'value' => $resultUrl,
+        'errors' => $errors
+    ];
+    var_dump($errors);
 
-
-
+    $response = $response->withStatus(422);
+    return $this->get('renderer')->render($response, 'index.phtml', $params);
 });
 
 $app->run();

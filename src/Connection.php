@@ -28,6 +28,7 @@ final class Connection
     }
 
     public function connect($databaseUrl)
+    {
 
         $conStr = $this->getConStr($databaseUrl);
         $pdo = new \PDO($conStr);

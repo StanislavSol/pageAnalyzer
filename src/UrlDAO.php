@@ -10,7 +10,7 @@ class UrlDAO
     private \PDO $pdo;
     private bool $isSaveUrl;
 
-    public function __construct(PDO $pdo) {
+    public function __construct(\PDO $pdo) {
         $this->pdo = $pdo;
         $this->isSaveUrl = true;
     }
@@ -29,7 +29,7 @@ class UrlDAO
                 $id = (int) $this->pdo->lastInsertId();
                 $url->setId($id);
                 $url->setTimeCreated($timeNow);
-            } catch {
+            } catch (PDOException $e) {
                 $this->isSaveUrl = false;
             }
         }
@@ -51,7 +51,7 @@ class UrlDAO
 
     public function getAllUrl(): array
     {
-        $sql = "SELECT * FROM users";
+        $sql = "SELECT * FROM urls";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         $allUrls = $stmt->fetchAll();
