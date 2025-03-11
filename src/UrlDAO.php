@@ -5,6 +5,8 @@ namespace App;
 use App\Url;
 use Carbon\Carbon;
 
+const INDEX_ID = 0;
+
 class UrlDAO 
 {
     private \PDO $pdo;
@@ -18,11 +20,11 @@ class UrlDAO
     public function save(Url $url): void
     {
         if (is_null($url->getId())) {
+            $timeNow = Carbon::now()->toDateTimeString();
             try {
                 $sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
                 $stmt = $this->pdo->prepare($sql);
                 $username = $url->getUrlName();
-                $timeNow = Carbon::now()->toDateTimeString();
                 $stmt->bindParam(1, $username);
                 $stmt->bindParam(2, $timeNow);
                 $stmt->execute();
@@ -30,6 +32,14 @@ class UrlDAO
                 $url->setId($id);
                 $url->setTimeCreated($timeNow);
             } catch (\PDOException) {
+                $sql = "SELECT id FROM urls WHERE name = ?";
+                $stmt = $this->pdo->prepare($sql);
+                $username = $url->getUrlName();
+                $stmt->bindParam(1, $username);
+                $stmt->execute();
+                $id = $stmt->fetch();
+                $url->setId((integer) $id[INDEX_ID]);
+                $url->setTimeCreated($timeNow);
                 $this->isSaveUrl = false;
             }
         }
@@ -37,12 +47,12 @@ class UrlDAO
 
     public function find(int $id): ?Url
     {
-        $sql = "SELECT * FROM users WHERE id = ?";
+        $sql = "SELECT * FROM urls WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$id]);
         $result = $stmt->fetch();
         if ($result) {
-            $url = new Url($result['name'], $result['$timeCreated']);
+            $url = new Url($result['name'], $result['created_at']);
             $url->setId($id);
             return $url;
         }
@@ -57,7 +67,7 @@ class UrlDAO
         $allUrls = $stmt->fetchAll();
         $urls = [];
 
-        foreach ($result as $urlData) {
+        foreach ($allUrls as $urlData) {
             $idUrl = $urlData['id'];
             $nameUrl = $urlData['name'];
             $timeCreated = $urlData['created_at'];

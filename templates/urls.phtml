@@ -22,12 +22,13 @@
                    <td><?= $url->getId() ?></td>
                    <td>
                    <a href="/urls/<?= $url->getId() ?>">
-                       <?= $url->getUrl() ?>
+                       <?= $url->getUrlName() ?>
                    </a>
                    </td>
                    <td><?= $url->getTimeCreated() ?></td>
                    <td>null</td>
                 </tr>
+            <?php endforeach ?>
            </tbody>
            </table>
        </div>

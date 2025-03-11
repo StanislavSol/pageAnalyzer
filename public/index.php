@@ -39,7 +39,7 @@ $app->get('/', function ($request, $response, array $args) {
 })->setName('index');
 
 $app->get('/url/{id}', function ($request, $response, array $args) use ($databaseUrl) {
-    $id = $args['id'];
+    $id = (integer) $args['id'];
     $pdo = Connection::get()->connect($databaseUrl);
     $dao = new UrlDAO($pdo);
     $url = $dao->find($id);
@@ -53,12 +53,10 @@ $app->get('/url/{id}', function ($request, $response, array $args) use ($databas
 
 $app->get('/urls', function ($request, $response, array $args) use ($databaseUrl) {
     $pdo = Connection::get()->connect($databaseUrl);
-    var_dump(gettype($pdo));
     $dao = new UrlDAO($pdo);
     $urls = $dao->getAllUrl();
     $params = [
         'urls' => $urls,
-        'errors' => []
     ];
     return $this->get('renderer')->render($response, 'urls.phtml', $params);
 })->setName('urls');
@@ -82,6 +80,7 @@ $app->post('/urls', function ($request, $response) use ($router, $databaseUrl) {
         } else {
             $this->get('flash')->addMessage('success', 'Страница уже существует');
         }
+
         $id = $newUrl->getId();
         $url = $router->urlFor('url', ['id' => $id]);
         return $response->withRedirect($url);
