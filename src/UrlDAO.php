@@ -20,8 +20,9 @@ class UrlDAO
     public function save(Url $url): void
     {
         if (is_null($url->getId())) {
+            $findUrl = $this->find($url->getUrlName(), 'name');
             $timeNow = Carbon::now()->toDateTimeString();
-            try {
+            if (is_null($findUrl)) {
                 $sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
                 $stmt = $this->pdo->prepare($sql);
                 $username = $url->getUrlName();
@@ -29,9 +30,10 @@ class UrlDAO
                 $stmt->bindParam(2, $timeNow);
                 $stmt->execute();
                 $id = (int) $this->pdo->lastInsertId();
+                var_dump($id);
                 $url->setId($id);
                 $url->setTimeCreated($timeNow);
-            } catch (\PDOException) {
+            } else {
                 $sql = "SELECT id FROM urls WHERE name = ?";
                 $stmt = $this->pdo->prepare($sql);
                 $username = $url->getUrlName();
@@ -45,15 +47,15 @@ class UrlDAO
         }
     }
 
-    public function find(int $id): ?Url
+    public function find($value, $valueSearch = 'id'): ?Url
     {
-        $sql = "SELECT * FROM urls WHERE id = ?";
+        $sql = "SELECT * FROM urls WHERE {$valueSearch} = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$id]);
+        $stmt->execute([$value]);
         $result = $stmt->fetch();
         if ($result) {
             $url = new Url($result['name'], $result['created_at']);
-            $url->setId($id);
+            $url->setId($result['id']);
             return $url;
         }
         return null;

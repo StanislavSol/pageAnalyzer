@@ -43,6 +43,7 @@ $app->get('/url/{id}', function ($request, $response, array $args) use ($databas
     $pdo = Connection::get()->connect($databaseUrl);
     $dao = new UrlDAO($pdo);
     $url = $dao->find($id);
+    var_dump($url);
     $messages = $this->get('flash')->getMessages();
     $params = [
         'url' => $url,
