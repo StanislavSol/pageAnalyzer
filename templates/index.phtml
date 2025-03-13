@@ -18,15 +18,15 @@
                 type="text"
                 name="url[name]"
                 value="<?= htmlspecialchars($value); ?>"
-                class="form-control form-control-lg"
+                class="form-control form-control-lg is-invalid"
                 placeholder="https://www.example.com"
                 >
             </div>
             <div class="col-2">
                 <input type="submit" class="btn btn-primary btn-lg ms-3 px-5 text-uppercase mx-3" value="Проверить">
             </div>
-            <?php if (isset($errors['name'])): ?>
-                <div><?= $errors['name'] ?></div>
+            <?php if (isset($error)): ?>
+                <div class="invalid-feedback d-block"><?= $error ?></div>
             <?php endif ?>
             </form>
         </div>

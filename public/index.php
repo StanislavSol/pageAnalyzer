@@ -15,6 +15,8 @@ use App\UrlDAO;
 use App\Url;
 use App\NormalizationAndValidationURL;
 
+const INDEX_FIRST_ERROR = 0;
+
 session_start();
 
 $container = new Container();
@@ -32,9 +34,11 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 $databaseUrl = parse_url($_ENV['DATABASE_URL']);
 
-$app->get('/', function ($request, $response, array $args) {
-    $params = $args;
-    var_dump($params);
+$app->get('/', function ($request, $response) {
+    $params = [
+        'value' => '',
+        'error' => ''
+    ];
     return $this->get('renderer')->render($response, 'index.phtml', $params);
 })->setName('index');
 
@@ -43,7 +47,6 @@ $app->get('/url/{id}', function ($request, $response, array $args) use ($databas
     $pdo = Connection::get()->connect($databaseUrl);
     $dao = new UrlDAO($pdo);
     $url = $dao->find($id);
-    var_dump($url);
     $messages = $this->get('flash')->getMessages();
     $params = [
         'url' => $url,
@@ -87,9 +90,11 @@ $app->post('/urls', function ($request, $response) use ($router, $databaseUrl) {
         return $response->withRedirect($url);
     }
     $params = [
-        'value' => $resultUrl,
-        'errors' => $errors
+        'value' => $gotUrl,
+        'error' => $errors['URL'][INDEX_FIRST_ERROR]
     ];
+
+    var_dump($params);
 
     $response = $response->withStatus(422);
     return $this->get('renderer')->render($response, 'index.phtml', $params);
