@@ -30,7 +30,6 @@ class UrlDAO
                 $stmt->bindParam(2, $timeNow);
                 $stmt->execute();
                 $id = (int) $this->pdo->lastInsertId();
-                var_dump($id);
                 $url->setId($id);
                 $url->setTimeCreated($timeNow);
             } else {

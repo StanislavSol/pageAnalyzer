@@ -7,10 +7,10 @@ CREATE TABLE urls (
     created_at timestamp
 );
 
-CREATE TABLE url_checks (
+CREATE TABLE checks (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     url_id bigint,
-    status_code bigint NOT NULL,
+    status_code bigint,
     h1 text,
     title text,
     description text,

@@ -13,6 +13,8 @@ use DI\Container;
 use App\Connection;
 use App\UrlDAO;
 use App\Url;
+use App\CheckDAO;
+use App\Check;
 use App\NormalizationAndValidationURL;
 
 const INDEX_FIRST_ERROR = 0;
@@ -45,12 +47,17 @@ $app->get('/', function ($request, $response) {
 $app->get('/url/{id}', function ($request, $response, array $args) use ($databaseUrl) {
     $id = (integer) $args['id'];
     $pdo = Connection::get()->connect($databaseUrl);
-    $dao = new UrlDAO($pdo);
-    $url = $dao->find($id);
+    $urlDao = new UrlDAO($pdo);
+    $checkDao = new CheckDAO($pdo);
+    $url = $urlDao->find($id);
+    $checks = $checkDao->find($id);
+    var_dump($checks);
+
     $messages = $this->get('flash')->getMessages();
     $params = [
         'url' => $url,
-        'messages' => $messages
+        'messages' => $messages,
+        'checks' => $checks
     ];
     return $this->get('renderer')->render($response, 'url.phtml', $params);
 })->setName('url');
@@ -94,10 +101,23 @@ $app->post('/urls', function ($request, $response) use ($router, $databaseUrl) {
         'error' => $errors['URL'][INDEX_FIRST_ERROR]
     ];
 
-    var_dump($params);
-
     $response = $response->withStatus(422);
     return $this->get('renderer')->render($response, 'index.phtml', $params);
+});
+
+$app->post('/urls/{id}/checks', function ($request, $response, array $args) use ($router, $databaseUrl) {
+
+    $urlId = $args['id'];
+    $newCheck = new Check($urlId);
+    $pdo = Connection::get()->connect($databaseUrl);
+    $dao = new CheckDAO($pdo);
+    $dao->save($newCheck);
+    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+
+    $id = $newCheck->getUrlId();
+    $url = $router->urlFor('url', ['id' => $id]);
+    return $response->withRedirect($url);
+
 });
 
 $app->run();

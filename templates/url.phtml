@@ -40,8 +40,18 @@
       </tr>
     </thead>
     <tbody>
-      php foreach ($checks as $check): 
+    <?php foreach ($checks as $check): ?>
+    <tr>
+        <td><?= $check->getId() ?></td>
+        <td><?= $check->getStatusCode() ?></td>
+        <td><?= $check->getH1() ?></td>
+        <td><?= $check->getTitle() ?></td>
+        <td><?= $check->getDescription() ?></td>
+        <td><?= $check->getTimeCreated() ?></td>
+    </tr> 
+    <?php endforeach ?>
     </tbody>
+
   </table>
         </div>
     </main>
