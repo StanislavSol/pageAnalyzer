@@ -26,7 +26,9 @@ class CheckDAO
             $id = (int) $this->pdo->lastInsertId();
             $check->setId($id);
             $check->setTimeCreated($timeNow);
+            var_dump($check);
         }
+        var_dump($check);
     }
 
     public function find($value, $valueSearch = 'url_id')
@@ -36,15 +38,13 @@ class CheckDAO
         $stmt->execute([$value]);
         $allChecks = $stmt->fetchAll();
         $checks = [];
+        var_dump($allChecks);
 
         foreach ($allChecks as $check) {
-            $id = $check['id'];
-            $urlId = $check['url_id'];
-            $timeCheck = $check['created_at'];
-            $check = new Check($urlId);
-            $check->setId($id);
-            $check->setTimeCreated($timeCheck);
-            $checks[] = $check;
+            $data = new Check($check['url_id']);
+            $data->setId($check['id']);
+            $data->setTimeCreated($check['created_at']);
+            $checks[] = $data;
         }
 
         return $checks;

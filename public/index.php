@@ -113,6 +113,7 @@ $app->post('/urls/{id}/checks', function ($request, $response, array $args) use 
     $dao = new CheckDAO($pdo);
     $dao->save($newCheck);
     $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+    var_dump();
 
     $id = $newCheck->getUrlId();
     $url = $router->urlFor('url', ['id' => $id]);
