@@ -18,7 +18,7 @@
                 type="text"
                 name="url[name]"
                 value="<?= htmlspecialchars($value); ?>"
-                class="form-control form-control-lg is-invalid"
+                class="form-control form-control-lg <?= !empty($error) ? "is-invalid" : "" ?>"
                 placeholder="https://www.example.com"
                 >
             </div>
