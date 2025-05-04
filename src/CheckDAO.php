@@ -20,26 +20,24 @@ class CheckDAO
             $sql = "INSERT INTO checks (url_id, created_at) VALUES (?, ?)";
             $stmt = $this->pdo->prepare($sql);
             $timeNow = Carbon::now()->toDateTimeString();
-            $stmt->bindParam(1, $check->getUrlId);
+            $stmt->bindParam(1, $check->getUrlId());
             $stmt->bindParam(2, $timeNow);
             $stmt->execute();
             $id = (int) $this->pdo->lastInsertId();
             $check->setId($id);
             $check->setTimeCreated($timeNow);
-            var_dump($check);
+
         }
-        var_dump($check);
+
     }
 
     public function find($value, $valueSearch = 'url_id')
     {
-        $sql = "SELECT * FROM checks WHERE {$valueSearch} = ?";
+        $sql = "SELECT * FROM checks WHERE {$valueSearch} = ? ORDER BY id DESC";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$value]);
         $allChecks = $stmt->fetchAll();
         $checks = [];
-        var_dump($allChecks);
-
         foreach ($allChecks as $check) {
             $data = new Check($check['url_id']);
             $data->setId($check['id']);

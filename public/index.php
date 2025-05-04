@@ -44,14 +44,14 @@ $app->get('/', function ($request, $response) {
     return $this->get('renderer')->render($response, 'index.phtml', $params);
 })->setName('index');
 
-$app->get('/url/{id}', function ($request, $response, array $args) use ($databaseUrl) {
+$app->get('/urls/{id}', function ($request, $response, array $args) use ($databaseUrl) {
+
     $id = (integer) $args['id'];
     $pdo = Connection::get()->connect($databaseUrl);
     $urlDao = new UrlDAO($pdo);
     $checkDao = new CheckDAO($pdo);
     $url = $urlDao->find($id);
     $checks = $checkDao->find($id);
-    var_dump($checks);
 
     $messages = $this->get('flash')->getMessages();
     $params = [
@@ -63,6 +63,7 @@ $app->get('/url/{id}', function ($request, $response, array $args) use ($databas
 })->setName('url');
 
 $app->get('/urls', function ($request, $response, array $args) use ($databaseUrl) {
+
     $pdo = Connection::get()->connect($databaseUrl);
     $dao = new UrlDAO($pdo);
     $urls = $dao->getAllUrl();
@@ -112,11 +113,10 @@ $app->post('/urls/{id}/checks', function ($request, $response, array $args) use 
     $pdo = Connection::get()->connect($databaseUrl);
     $dao = new CheckDAO($pdo);
     $dao->save($newCheck);
-    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-    var_dump();
 
-    $id = $newCheck->getUrlId();
-    $url = $router->urlFor('url', ['id' => $id]);
+    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+
+    $url = $router->urlFor('url', ['id' => $urlId]);
     return $response->withRedirect($url);
 
 });

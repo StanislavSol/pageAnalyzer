@@ -3,6 +3,12 @@
 <body class="min-vh-100 d-flex flex-column">
 <?php include('components/header.phtml'); ?>
 
+<?php foreach ($messages as $key => $value): ?>
+    <div class="alert alert-<?= $key ?>" role="alert">
+    <?= $value[0] ?>
+    </div>
+<?php endforeach ?>
+
 <main class="flex-grow-1">
     <div class="container-lg mt-3">
     <h1>Сайт: <?= $url->getUrlName() ?></h1>
