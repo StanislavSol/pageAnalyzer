@@ -16,6 +16,7 @@ use App\Url;
 use App\CheckDAO;
 use App\Check;
 use App\NormalizationAndValidationURL;
+use App\HtmlCheck;
 
 const INDEX_FIRST_ERROR = 0;
 
@@ -63,6 +64,7 @@ $app->get('/urls/{id}', function ($request, $response, array $args) use ($databa
 })->setName('url');
 
 $app->get('/urls', function ($request, $response, array $args) use ($databaseUrl) {
+
     $pdo = Connection::get()->connect($databaseUrl);
     $daoUrl = new UrlDAO($pdo);
     $urls = $daoUrl->getAllUrl();
@@ -115,8 +117,16 @@ $app->post('/urls', function ($request, $response) use ($router, $databaseUrl) {
 $app->post('/urls/{id}/checks', function ($request, $response, array $args) use ($router, $databaseUrl) {
 
     $urlId = $args['id'];
-    $newCheck = new Check($urlId);
     $pdo = Connection::get()->connect($databaseUrl);
+
+    $newCheck = new Check($urlId);
+    $urlDao = new UrlDAO($pdo);
+    $url = $urlDao->find($urlId);
+
+    $htmlCheck = new HtmlCheck();
+    $statusCode = $htmlCheck->getStatusCode($url->getUrlName());
+    $newCheck->setStatusCode($statusCode);
+
     $dao = new CheckDAO($pdo);
     $dao->save($newCheck);
 

@@ -17,11 +17,12 @@ class CheckDAO
     public function save(Check $check): void
     {
         if (is_null($check->getId())) {
-            $sql = "INSERT INTO checks (url_id, created_at) VALUES (?, ?)";
+            $sql = "INSERT INTO checks (url_id, created_at, status_code) VALUES (?, ?, ?)";
             $stmt = $this->pdo->prepare($sql);
             $timeNow = Carbon::now()->toDateTimeString();
             $stmt->bindParam(1, $check->getUrlId());
             $stmt->bindParam(2, $timeNow);
+            $stmt->bindParam(3, $check->getStatusCode());
             $stmt->execute();
             $id = (int) $this->pdo->lastInsertId();
             $check->setId($id);
@@ -42,6 +43,7 @@ class CheckDAO
             $data = new Check($check['url_id']);
             $data->setId($check['id']);
             $data->setTimeCreated($check['created_at']);
+            $data->setStatusCode($check['status_code']);
             $checks[] = $data;
         }
         return $checks;
