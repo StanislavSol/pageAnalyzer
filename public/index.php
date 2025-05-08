@@ -51,7 +51,7 @@ $app->get('/urls/{id}', function ($request, $response, array $args) use ($databa
     $urlDao = new UrlDAO($pdo);
     $checkDao = new CheckDAO($pdo);
     $url = $urlDao->find($id);
-    $checks = $checkDao->find($id);
+    $checks = $checkDao->getChecks($id);
 
     $messages = $this->get('flash')->getMessages();
     $params = [
@@ -63,12 +63,18 @@ $app->get('/urls/{id}', function ($request, $response, array $args) use ($databa
 })->setName('url');
 
 $app->get('/urls', function ($request, $response, array $args) use ($databaseUrl) {
-
     $pdo = Connection::get()->connect($databaseUrl);
-    $dao = new UrlDAO($pdo);
-    $urls = $dao->getAllUrl();
+    $daoUrl = new UrlDAO($pdo);
+    $urls = $daoUrl->getAllUrl();
+    $daoCheck = new CheckDAO($pdo);
+    $infoUrls = [];
+    foreach ($urls as $url) {
+        $info["url"] = $url;
+        $info["check"] = $daoCheck->findLastCheck($url->getId());
+        $infoUrls[] = $info;
+    }
     $params = [
-        'urls' => $urls,
+        'urls' => $infoUrls,
     ];
     return $this->get('renderer')->render($response, 'urls.phtml', $params);
 })->setName('urls');

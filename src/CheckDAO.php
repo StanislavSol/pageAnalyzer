@@ -31,7 +31,7 @@ class CheckDAO
 
     }
 
-    public function find($value, $valueSearch = 'url_id')
+    public function getChecks($value, $valueSearch = 'url_id')
     {
         $sql = "SELECT * FROM checks WHERE {$valueSearch} = ? ORDER BY id DESC";
         $stmt = $this->pdo->prepare($sql);
@@ -44,7 +44,20 @@ class CheckDAO
             $data->setTimeCreated($check['created_at']);
             $checks[] = $data;
         }
-
         return $checks;
+    }
+
+    public function findLastCheck($url_id)
+    {
+        $sql = "SELECT * FROM checks WHERE url_id = ? ORDER BY created_at DESC LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$url_id]);
+        $check = $stmt->fetch();
+        $data = new Check($check['url_id']);
+        $data->setTimeCreated($check['created_at']);
+        $data->setStatusCode($check['status_code']);
+
+        return $data;
+
     }
 }
