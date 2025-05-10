@@ -13,6 +13,6 @@ WORKDIR /app
 COPY . .
 
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs
-RUN psql -a -d $DATABASE_URL -f database.sql
+RUN psql $DATABASE_URL -f database.sql
 
 CMD ["bash", "-c", "make start"]
