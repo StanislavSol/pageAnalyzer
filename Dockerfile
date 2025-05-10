@@ -16,17 +16,16 @@ RUN apt-get update && \
         postgresql-client \
         unzip && \
     docker-php-ext-install pdo pdo_pgsql zip opcache && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /app/var && \
+    chown -R www-data:www-data /app/var
 
 # Копируем vendor из builder-стадии
 COPY --from=builder /app/vendor /app/vendor
 
-# Рабочая директория
+# Рабочая директория и копирование кода
 WORKDIR /app
 COPY . .
-
-# Настройка прав (для Render)
-RUN chown -R www-data:www-data /app/var
 
 # Команда запуска с миграциями
 CMD psql ${DATABASE_URL} -f database.sql && php-fpm
