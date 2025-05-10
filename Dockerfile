@@ -12,6 +12,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN composer install --no-dev --no-scripts --no-autoloader --ignore-platform-reqs
+RUN composer install --no-dev --no-scripts --ignore-platform-reqs
 
 CMD ["bash", "-c", "make start"]
