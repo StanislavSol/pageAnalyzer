@@ -1,27 +1,33 @@
-# Стадия сборки зависимостей
-FROM composer:2.6 AS builder
+# Стадия 1: Установка зависимостей через Composer
+FROM composer:2.6 as builder
+
 WORKDIR /app
-COPY composer.* ./
-RUN composer install --no-dev --optimize-autoloader
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Финальный образ
-FROM php:8.2-cli  # Используем cli вместо fpm для консольного приложения
+# Стадия 2: Финальный образ
+FROM php:8.2-cli
 
-# Установка зависимостей
+# Установка системных зависимостей
 RUN apt-get update && \
     apt-get install -y \
         libpq-dev \
-        postgresql-client && \
+        postgresql-client \
+        unzip && \
     docker-php-ext-install pdo pdo_pgsql && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /app/var && \
+    chown -R www-data:www-data /app/var
 
-# Копируем код и зависимости
+# Копирование vendor из builder-стадии
+COPY --from=builder /app/vendor /app/vendor
+
+# Копирование основного кода
 WORKDIR /app
-COPY --from=builder /app/vendor ./vendor
 COPY . .
 
-# Настройка порта (для Render)
-EXPOSE 10000  # Render требует явное указание порта
+# Порт для Render
+EXPOSE 10000
 
 # Команда запуска
-CMD php -S 0.0.0.0:${PORT} -t public
+CMD php -S 0.0.0.0:$PORT -t public
