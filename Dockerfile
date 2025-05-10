@@ -1,13 +1,13 @@
-# Используем официальный образ PHP с PostgreSQL поддержкой
+# Базовый образ
 FROM php:8.2-fpm
 
-# Установка зависимостей для Render
-RUN apt-get update && \
-    apt-get install -y \
-        libpq-dev \
-        libzip-dev \
-        postgresql-client-15 \  # Клиент для миграций
-        unzip && \
+# Установка зависимостей в ОДНУ команду RUN
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    postgresql-client && \
     docker-php-ext-install pdo pdo_pgsql zip opcache && \
     rm -rf /var/lib/apt/lists/*
 
@@ -17,15 +17,15 @@ COPY --from=composer:latest /usr/local/bin/composer /usr/local/bin/composer
 # Рабочая директория
 WORKDIR /app
 
-# Копируем зависимости отдельно для кэширования
+# Копирование зависимостей и установка
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Копируем весь код
+# Копирование всего кода
 COPY . .
 
-# Настройка прав (для Render)
-RUN chmod -R 775 /app/var
+# Настройка прав
+RUN chown -R www-data:www-data /app/var
 
-# Применение миграций и запуск (специфика Render)
-CMD psql ${DATABASE_URL} -f database.sql && php-fpm
+# Команда для Render (миграции + запуск)
+CMD psql $DATABASE_URL -f database.sql && php-fpm
