@@ -25,6 +25,7 @@
         "vlucas/valitron": "^1.4",
         "nesbot/carbon": "^3.8",
         "slim/flash": "^0.4.0",
-        "guzzlehttp/guzzle": "^7.0"
+        "guzzlehttp/guzzle": "^7.0",
+        "imangazaliev/didom": "^2.0"
     }
 }

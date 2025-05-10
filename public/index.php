@@ -123,17 +123,21 @@ $app->post('/urls/{id}/checks', function ($request, $response, array $args) use 
     $url = $urlDao->find($urlId);
 
     $htmlCheck = new HtmlCheck($url->getUrlName());
-    [$statusCode, $message] = $htmlCheck->getStatusCode();
+    $infoUrl = $htmlCheck->getInfoUrl();
 
-    if (!is_null($statusCode)) {
+    if (!is_null($infoUrl["statusCode"])) {
         $newCheck = new Check($urlId);
-        $newCheck->setStatusCode($statusCode);
+        $newCheck->setStatusCode($infoUrl["statusCode"]);
+        $newCheck->setH1($infoUrl["h1"]);
+        $newCheck->setTitle($infoUrl["title"]);
+        $newCheck->setDescription($infoUrl["description"]);
 
         $dao = new CheckDAO($pdo);
         $dao->save($newCheck);
+
     }
 
-    $this->get('flash')->addMessage(...$message);
+    $this->get('flash')->addMessage(...$infoUrl["message"]);
 
     $url = $router->urlFor('url', ['id' => $urlId]);
     return $response->withRedirect($url);

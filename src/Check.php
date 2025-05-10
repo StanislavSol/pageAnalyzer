@@ -4,7 +4,7 @@ namespace App;
 
 class Check
 {
-    private $urlCheckId;
+    private $id;
     private $urlId;
     private $statusCode;
     private $h1;
@@ -85,7 +85,7 @@ class Check
 
     public function setDescription($description): void
     {
-        $this->Description = $description;
+        $this->description = $description;
     }
 
     public function setTimeCreated($timeCreated): void
