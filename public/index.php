@@ -119,18 +119,21 @@ $app->post('/urls/{id}/checks', function ($request, $response, array $args) use 
     $urlId = $args['id'];
     $pdo = Connection::get()->connect($databaseUrl);
 
-    $newCheck = new Check($urlId);
     $urlDao = new UrlDAO($pdo);
     $url = $urlDao->find($urlId);
 
-    $htmlCheck = new HtmlCheck();
-    $statusCode = $htmlCheck->getStatusCode($url->getUrlName());
-    $newCheck->setStatusCode($statusCode);
+    $htmlCheck = new HtmlCheck($url->getUrlName());
+    [$statusCode, $message] = $htmlCheck->getStatusCode();
 
-    $dao = new CheckDAO($pdo);
-    $dao->save($newCheck);
+    if (!is_null($statusCode)) {
+        $newCheck = new Check($urlId);
+        $newCheck->setStatusCode($statusCode);
 
-    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+        $dao = new CheckDAO($pdo);
+        $dao->save($newCheck);
+    }
+
+    $this->get('flash')->addMessage(...$message);
 
     $url = $router->urlFor('url', ['id' => $urlId]);
     return $response->withRedirect($url);
