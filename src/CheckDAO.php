@@ -25,7 +25,7 @@ class CheckDAO
             $h1 = $check->getH1();
             $title = $check->getTitle();
             $description = $check->getDescription();
-            $stmt->bindParam(1, $check->$urlId);
+            $stmt->bindParam(1, $urlId);
             $stmt->bindParam(2, $timeNow);
             $stmt->bindParam(3, $statusCode);
             $stmt->bindParam(4, $h1);
