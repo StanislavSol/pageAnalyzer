@@ -18,7 +18,7 @@ use App\Check;
 use App\NormalizationAndValidationURL;
 use App\HtmlCheck;
 
-const INDEX_FIRST_ERROR = 0;
+const FIRST_INDEX_ERROR = 0;
 
 session_start();
 
@@ -109,7 +109,7 @@ $app->post('/urls', function ($request, $response) use ($router, $databaseUrl) {
     }
     $params = [
         'value' => $gotUrl,
-        'error' => $errors['URL'][INDEX_FIRST_ERROR]
+        'error' => $errors['URL'][FIRST_INDEX_ERROR]
     ];
 
     $response = $response->withStatus(422);

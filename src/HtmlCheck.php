@@ -4,6 +4,8 @@ namespace App;
 
 use DiDom\Document;
 
+const FIRST_INDEX_ELEMENT = 0;
+
 class HtmlCheck
 { 
     private $url;
@@ -27,11 +29,11 @@ class HtmlCheck
             $document = new Document($this->url, true);
 
             $resultCheck["statusCode"] = $request->getStatusCode();
-            $resultCheck["h1"] = $document->find("h1")[0]->text();
-            $resultCheck["title"] = $document->find("title")[0]->text();
+            $resultCheck["h1"] = $document->find("h1")[FIRST_INDEX_ELEMENT]->text();
+            $resultCheck["title"] = $document->find("title")[FIRST_INDEX_ELEMENT]->text();
 
             if ($document->has('meta[name=description]')) {
-                $resultCheck["description"] = $document->find('meta[name=description]')[0]->content;
+                $resultCheck["description"] = $document->find('meta[name=description]')[FIRST_INDEX_ELEMENT]->content;
             }
             $resultCheck["message"] = ["success", "Страница успешно проверена"];
 
