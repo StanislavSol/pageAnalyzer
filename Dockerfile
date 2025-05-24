@@ -30,4 +30,4 @@ COPY . .
 EXPOSE 10000
 
 # Команда запуска
-CMD sh -c "psql -a -d \$DATABASE_URL -f /tmp/database.sql && php -S 0.0.0.0:\$PORT -t public"
+CMD sh -c "psql -a -d $DATABASE_URL -f database.sql && php -S 0.0.0.0:\$PORT -t public"
