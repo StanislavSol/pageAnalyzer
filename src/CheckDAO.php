@@ -78,11 +78,11 @@ class CheckDAO
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':url_id' => $url_id]);
         $check = $stmt->fetch();
-
+        
         if ($check === false) {
             return null;
         }
-
+        
         return (new Check($check['url_id']))
             ->setId($check['id'])
             ->setTimeCreated($check['created_at'])
