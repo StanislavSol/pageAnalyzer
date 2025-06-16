@@ -42,8 +42,9 @@ class HtmlCheck
             $resultCheck["statusCode"] = 403;
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
             $resultCheck["message"] = ["danger", "Произошла ошибка при проверке, не удалось подключиться"];
-        }
-
+        } catch (\GuzzleHttp\Exception\RuntimeException $e)
+            resultCheck["message"] = ["warning", "Проверка была выполнена успешно, но сервер ответил с ошибкой"];
+            $resultCheck["statusCode"] = 400;
         return $resultCheck;
 
     }
