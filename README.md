@@ -5,7 +5,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Render](https://img.shields.io/badge/Deployed_on-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://render.com)
 
-**Page Analyzer** — веб-приложение для SEO-анализа страниц (H1, Title, Description, HTTP-статус). Построено на **Slim 4** с использованием MVC.
+**Page Analyzer** — веб-приложение для SEO-анализа страниц (H1, Title, Description, HTTP-статус). Построено с помощью фреймворка **Slim**.
 
 🔗 **Демо:** [https://pageanalyzer-2qu3.onrender.com/](https://pageanalyzer-2qu3.onrender.com/)
 
@@ -21,8 +21,6 @@
 | Git | 2.0+ |
 | Make | 3.81+ |
 | ОС | Linux/macOS/WSL2 |
-
-**Расширения PHP:** `pdo_pgsql`, `curl`, `json`, `mbstring`, `xml`
 
 ---
 
