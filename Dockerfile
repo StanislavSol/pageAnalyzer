@@ -6,7 +6,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Стадия 2: Финальный образ
-FROM php:8.2-cli
+FROM php:8.3-cli
 
 # Установка системных зависимостей
 RUN apt-get update && \
