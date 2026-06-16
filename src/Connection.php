@@ -29,8 +29,7 @@ final class Connection
 
     public function connect($databaseUrl)
     {
-	$conStr = $this->getConStr($databaseUrl);
-	var_dump($conStr);
+		$conStr = $this->getConStr($databaseUrl);
         $pdo = new \PDO($conStr);
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
