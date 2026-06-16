@@ -5,15 +5,17 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Стадия 2: Финальный образ
-FROM php:8.3-cli
+# Стадия 2: Финальный образ с PHP 8.3
+FROM php:8.3-cli 
 
 # Установка системных зависимостей
 RUN apt-get update && \
     apt-get install -y \
         libpq-dev \
         postgresql-client \
-        unzip && \
+        unzip \
+        git \
+        vim && \
     docker-php-ext-install pdo pdo_pgsql && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /app/var && \
