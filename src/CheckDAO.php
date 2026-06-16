@@ -70,7 +70,7 @@ class CheckDAO
         $check = $stmt->fetch();
         $data = new Check($check['url_id']);
         $data->setTimeCreated($check['created_at']);
-        $data->setStatusCode($check['status_code']);Add commentMore actions
+        $data->setStatusCode($check['status_code']);
 
         return $data;
     }
