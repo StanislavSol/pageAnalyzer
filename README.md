@@ -7,7 +7,6 @@
 
 **Page Analyzer** — веб-приложение для SEO-анализа страниц (H1, Title, Description, HTTP-статус). Построено с помощью фреймворка **Slim**.
 
-🔗 **Демо:** [https://pageanalyzer-2qu3.onrender.com/](https://pageanalyzer-2qu3.onrender.com/)
 
 ---
 
